@@ -52,20 +52,48 @@ const pluralize = (n: number, s: string) => n === 1 ? s : `${s}s`;
 	</div>
 	<div class="w-72 p-6 flex flex-col justify-between" v-else>
 		<div>
-			<p class="mt-4 mb-2">
-				Sharing {{ props.vm.outboundPayload.Files.length }} {{ pluralize(props.vm.outboundPayload.Files.length, "file") }}
-			</p>
-			<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-					class="w-8 h-8">
-					<!-- eslint-disable-next-line -->
-                    <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
-				</svg>
+			<div v-if="'Files' in props.vm.outboundPayload">
+				<p class="mt-4 mb-2">
+					Sharing {{ props.vm.outboundPayload.Files.length }} {{ pluralize(props.vm.outboundPayload.Files.length, "file") }}
+				</p>
+				<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
+					<svg
+						xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+						class="w-8 h-8">
+						<!-- eslint-disable-next-line -->
+						<path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
+					</svg>
+				</div>
+				<p v-for="f in props.vm.outboundPayload.Files" :key="f" class="overflow-hidden whitespace-nowrap text-ellipsis">
+					{{ f.split('/').pop() }}
+				</p>
 			</div>
-			<p v-for="f in props.vm.outboundPayload.Files" :key="f" class="overflow-hidden whitespace-nowrap text-ellipsis">
-				{{ f.split('/').pop() }}
-			</p>
+			<div v-else-if="'Text' in props.vm.outboundPayload">
+				<p class="mt-4 mb-2">
+					Sharing text
+				</p>
+				<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class="w-8 h-8">
+						<path d="M200-200h560v-80H200v80Zm0-160h560v-80H200v80Zm0-160h560v-80H200v80Z"/>
+					</svg>
+				</div>
+				<p class="overflow-hidden whitespace-nowrap text-ellipsis">
+					{{ props.vm.outboundPayload.Text }}
+				</p>
+			</div>
+			<div v-else-if="'Url' in props.vm.outboundPayload">
+				<p class="mt-4 mb-2">
+					Sharing URL
+				</p>
+				<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class="w-8 h-8">
+						<path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/>
+					</svg>
+				</div>
+				<p class="overflow-hidden whitespace-nowrap text-ellipsis">
+					{{ props.vm.outboundPayload.Url }}
+				</p>
+			</div>
 
 			<p class="text-xs mt-3">
 				Make sure both devices are unlocked, close together, and have bluetooth turned on. Device you're sharing with need
