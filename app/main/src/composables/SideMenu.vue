@@ -70,7 +70,7 @@ const pluralize = (n: number, s: string) => n === 1 ? s : `${s}s`;
 			</div>
 			<div v-else-if="'Text' in props.vm.outboundPayload">
 				<p class="mt-4 mb-2">
-					Sharing text
+					Sharing {{ props.vm.outboundPayload.Text.length }} text snippet(s)
 				</p>
 				<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class="w-8 h-8">
@@ -78,12 +78,12 @@ const pluralize = (n: number, s: string) => n === 1 ? s : `${s}s`;
 					</svg>
 				</div>
 				<p class="overflow-hidden whitespace-nowrap text-ellipsis">
-					{{ props.vm.outboundPayload.Text }}
+					{{ props.vm.outboundPayload.Text[0] }}
 				</p>
 			</div>
 			<div v-else-if="'Url' in props.vm.outboundPayload">
 				<p class="mt-4 mb-2">
-					Sharing URL
+					Sharing {{ props.vm.outboundPayload.Url.length }} URL(s)
 				</p>
 				<div class="bg-white w-32 h-32 rounded-2xl mb-2 flex justify-center items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" class="w-8 h-8">
@@ -91,7 +91,7 @@ const pluralize = (n: number, s: string) => n === 1 ? s : `${s}s`;
 					</svg>
 				</div>
 				<p class="overflow-hidden whitespace-nowrap text-ellipsis">
-					{{ props.vm.outboundPayload.Url }}
+					{{ props.vm.outboundPayload.Url[0] }}
 				</p>
 			</div>
 

@@ -389,7 +389,7 @@ export default {
 						const blob = await clipboardItem.getType('text/plain');
 						const text = await blob.text();
 						this.outboundPayload = {
-							Text: text
+							Text: [text]
 						} as OutboundPayload;
 
 						if (!this.discoveryRunning) await invoke('start_discovery');

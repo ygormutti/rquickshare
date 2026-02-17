@@ -85,7 +85,7 @@ pub struct InnerState {
     pub payload_buffers: HashMap<i64, Vec<u8>>,
 
     // Used to handle/track egress transfer
-    pub text_to_send: Option<(i64, String)>,
+    pub text_to_send: Vec<(i64, String)>,
 }
 
 #[derive(Debug, Clone)]
