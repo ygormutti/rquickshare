@@ -232,6 +232,8 @@ export default {
 	},
 
 	mounted: function () {
+		window.addEventListener('paste', this.handlePaste);
+
 		nextTick(async () => {
 			this.hostname = await invoke('get_hostname');
 			this.version = await getVersion();
@@ -337,6 +339,7 @@ export default {
 	},
 
 	unmounted: function() {
+		window.removeEventListener('paste', this.handlePaste);
 		this.unlisten.forEach((el) => el());
 
 		if (this.cleanupInterval && this.cleanupInterval[Symbol.dispose]) {
@@ -374,6 +377,49 @@ export default {
 				console.error("Error opening URL", e);
 			}
 		},
+
+		handlePaste: async function(e: ClipboardEvent) {
+			// Prevent default paste behavior
+			e.preventDefault();
+
+			try {
+				const clipboardItems = await navigator.clipboard.read();
+				for (const clipboardItem of clipboardItems) {
+					if (clipboardItem.types.includes('text/plain')) {
+						const blob = await clipboardItem.getType('text/plain');
+						const text = await blob.text();
+						this.outboundPayload = {
+							Text: [text]
+						} as OutboundPayload;
+
+						if (!this.discoveryRunning) await invoke('start_discovery');
+						this.discoveryRunning = true;
+						this.toastStore.addToast("Text pasted from clipboard", ToastType.Success);
+						return;
+					} else if (clipboardItem.types.includes('image/png') || clipboardItem.types.includes('image/jpeg')) {
+						const type = clipboardItem.types.find(t => t.startsWith('image/'))!;
+						const blob = await clipboardItem.getType(type);
+						const buffer = await blob.arrayBuffer();
+						const bytes = new Uint8Array(buffer);
+
+						// invoke save_temp_file
+						const extension = type.split('/')[1];
+						const path = await invoke('save_temp_file', { data: Array.from(bytes), extension });
+
+						this.outboundPayload = {
+							Files: [path as string]
+						} as OutboundPayload;
+
+						if (!this.discoveryRunning) await invoke('start_discovery');
+						this.discoveryRunning = true;
+						this.toastStore.addToast("Image pasted from clipboard", ToastType.Success);
+						return;
+					}
+				}
+			} catch (err) {
+				console.error("Failed to read clipboard contents: ", err);
+			}
+		}
 	},
 }
 </script>
