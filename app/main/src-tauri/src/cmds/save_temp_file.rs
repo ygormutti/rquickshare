@@ -6,7 +6,7 @@ pub async fn save_temp_file(data: Vec<u8>, extension: String) -> Result<String, 
     let start = SystemTime::now();
     let since_the_epoch = start
         .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
+        .map_err(|e| format!("Time went backwards: {}", e))?;
     let timestamp = since_the_epoch.as_nanos();
     let pid = std::process::id();
 
